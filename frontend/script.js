@@ -1,78 +1,67 @@
-const form = document.getElementById("predictionForm");
-const resultBox = document.getElementById("result");
-const loadingBox = document.getElementById("loading");
+const API_URL = "http://127.0.0.1:8000/ask";
+const questionForm = document.getElementById("questionForm");
+const questionInput = document.getElementById("questionInput");
+const sendButton = document.getElementById("sendButton");
+const chatBox = document.getElementById("chatBox");
 
-form.addEventListener("submit", async function (event) {
+function addMessage(message, type) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${type}`;
+    if (type === "bot") {
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+        avatar.textContent = "MI";
+        avatar.setAttribute("aria-hidden", "true");
+        messageDiv.appendChild(avatar);
+    }
+    const stack = document.createElement("div");
+    stack.className = "message-stack";
+    const label = document.createElement("span");
+    label.className = "message-label";
+    label.textContent = type === "bot" ? "Assistant" : "You";
+    const content = document.createElement("div");
+    content.className = "message-content";
+    content.textContent = message;
+    stack.append(label, content);
+    messageDiv.appendChild(stack);
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function setLoading(isLoading) {
+    sendButton.disabled = isLoading;
+    sendButton.querySelector("span").textContent = isLoading ? "Thinking..." : "Ask";
+}
+
+async function askQuestion(event) {
     event.preventDefault();
-
-    resultBox.classList.add("hidden");
-    loadingBox.classList.remove("hidden");
-
-    const customerData = {
-        gender: document.getElementById("gender").value,
-        SeniorCitizen: Number(document.getElementById("SeniorCitizen").value),
-        Partner: document.getElementById("Partner").value,
-        Dependents: document.getElementById("Dependents").value,
-        tenure: Number(document.getElementById("tenure").value),
-        PhoneService: document.getElementById("PhoneService").value,
-        MultipleLines: document.getElementById("MultipleLines").value,
-        InternetService: document.getElementById("InternetService").value,
-        OnlineSecurity: document.getElementById("OnlineSecurity").value,
-        OnlineBackup: document.getElementById("OnlineBackup").value,
-        DeviceProtection: document.getElementById("DeviceProtection").value,
-        TechSupport: document.getElementById("TechSupport").value,
-        StreamingTV: document.getElementById("StreamingTV").value,
-        StreamingMovies: document.getElementById("StreamingMovies").value,
-        Contract: document.getElementById("Contract").value,
-        PaperlessBilling: document.getElementById("PaperlessBilling").value,
-        PaymentMethod: document.getElementById("PaymentMethod").value,
-        MonthlyCharges: Number(document.getElementById("MonthlyCharges").value),
-        TotalCharges: Number(document.getElementById("TotalCharges").value)
-    };
-
+    const question = questionInput.value.trim();
+    if (!question || sendButton.disabled) return;
+    addMessage(question, "user");
+    questionInput.value = "";
+    setLoading(true);
     try {
-        const response = await fetch("http://127.0.0.1:8000/predict", {
+        const response = await fetch(API_URL, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(customerData)
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question, top_k: 10 })
         });
-
         const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.detail || "Prediction failed");
-        }
-
-        const prediction = data.churn_prediction;
-        const probability = (data.churn_probability * 100).toFixed(2);
-
-        resultBox.classList.remove("hidden", "churn", "no-churn");
-
-        if (prediction === 1 || prediction === "1" || prediction === true) {
-            resultBox.classList.add("churn");
-            resultBox.innerHTML = `
-                <h2>Customer May Churn</h2>
-                <p>Churn Probability: <strong>${probability}%</strong></p>
-                <p>Business Action: Contact the customer and offer retention support.</p>
-            `;
-        } else {
-            resultBox.classList.add("no-churn");
-            resultBox.innerHTML = `
-                <h2>Customer May Stay</h2>
-                <p>Churn Probability: <strong>${probability}%</strong></p>
-                <p>Business Action: Continue regular customer engagement.</p>
-            `;
-        }
+        if (!response.ok) throw new Error(data.detail || "The backend could not answer.");
+        addMessage(`${data.answer}\n\n${data.disclaimer}`, "bot");
     } catch (error) {
-        resultBox.classList.remove("hidden");
-        resultBox.classList.add("churn");
-        resultBox.innerHTML = `
-            <h2>Error</h2>
-            <p>${error.message}</p>
-        `;
+        console.error(error);
+        addMessage("I could not connect to the backend. Please make sure the FastAPI server is running on port 8000.", "bot");
     } finally {
-        loadingBox.classList.add("hidden");
+        setLoading(false);
+        questionInput.focus();
+    }
+}
+
+questionForm.addEventListener("submit", askQuestion);
+questionInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        questionForm.requestSubmit();
     }
 });

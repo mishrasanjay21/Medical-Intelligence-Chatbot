@@ -3,178 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Churn Prediction</title>
+    <meta name="description" content="Ask questions about your medical documents.">
+    <title>Medical Intelligence Chatbot</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Customer Churn Prediction</h1>
-        <p class="subtitle">Enter customer details to predict whether the customer may churn.</p>
-
-        <form id="predictionForm">
-            <div class="form-grid">
-                <div>
-                    <label for="gender">Gender</label>
-                    <select id="gender">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
+    <div class="app-shell">
+        <header class="header">
+            <div class="brand-mark" aria-hidden="true">+</div>
+            <div><p class="eyebrow">Medical intelligence</p><h1>Document assistant</h1></div>
+            <div class="status"><span class="status-dot"></span>Ready</div>
+        </header>
+        <main class="chat-container">
+            <section class="intro" aria-labelledby="intro-title">
+                <p class="eyebrow">RAG-powered answers</p>
+                <h2 id="intro-title">Ask your medical documents.</h2>
+                <p>Get clear, source-grounded information from the knowledge base in seconds.</p>
+            </section>
+            <section id="chatBox" class="chat-box" aria-live="polite" aria-label="Chat messages">
+                <div class="message bot">
+                    <div class="avatar" aria-hidden="true">MI</div>
+                    <div class="message-stack"><span class="message-label">Assistant</span><div class="message-content">Hello. I can help you explore the available medical documents. What would you like to know?</div></div>
                 </div>
-
-                <div>
-                    <label for="SeniorCitizen">Senior Citizen</label>
-                    <select id="SeniorCitizen">
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="Partner">Partner</label>
-                    <select id="Partner">
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="Dependents">Dependents</label>
-                    <select id="Dependents">
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="tenure">Tenure in Months</label>
-                    <input type="number" id="tenure" value="12" min="0" required>
-                </div>
-
-                <div>
-                    <label for="PhoneService">Phone Service</label>
-                    <select id="PhoneService">
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="MultipleLines">Multiple Lines</label>
-                    <select id="MultipleLines">
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No phone service">No phone service</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="InternetService">Internet Service</label>
-                    <select id="InternetService">
-                        <option value="DSL">DSL</option>
-                        <option value="Fiber optic">Fiber optic</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="OnlineSecurity">Online Security</label>
-                    <select id="OnlineSecurity">
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No internet service">No internet service</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="OnlineBackup">Online Backup</label>
-                    <select id="OnlineBackup">
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No internet service">No internet service</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="DeviceProtection">Device Protection</label>
-                    <select id="DeviceProtection">
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No internet service">No internet service</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="TechSupport">Tech Support</label>
-                    <select id="TechSupport">
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No internet service">No internet service</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="StreamingTV">Streaming TV</label>
-                    <select id="StreamingTV">
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No internet service">No internet service</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="StreamingMovies">Streaming Movies</label>
-                    <select id="StreamingMovies">
-                        <option value="No">No</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No internet service">No internet service</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="Contract">Contract</label>
-                    <select id="Contract">
-                        <option value="Month-to-month">Month-to-month</option>
-                        <option value="One year">One year</option>
-                        <option value="Two year">Two year</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="PaperlessBilling">Paperless Billing</label>
-                    <select id="PaperlessBilling">
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="PaymentMethod">Payment Method</label>
-                    <select id="PaymentMethod">
-                        <option value="Electronic check">Electronic check</option>
-                        <option value="Mailed check">Mailed check</option>
-                        <option value="Bank transfer (automatic)">Bank transfer (automatic)</option>
-                        <option value="Credit card (automatic)">Credit card (automatic)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="MonthlyCharges">Monthly Charges</label>
-                    <input type="number" id="MonthlyCharges" value="70.50" step="0.01" required>
-                </div>
-
-                <div>
-                    <label for="TotalCharges">Total Charges</label>
-                    <input type="number" id="TotalCharges" value="850.00" step="0.01" required>
-                </div>
-            </div>
-
-            <button type="submit">Predict Churn</button>
-        </form>
-
-        <div id="loading" class="loading hidden">Predicting...</div>
-        <div id="result" class="result hidden"></div>
+            </section>
+            <form id="questionForm" class="input-area">
+                <label class="sr-only" for="questionInput">Your medical question</label>
+                <textarea id="questionInput" placeholder="Ask a medical question..." rows="2" maxlength="1000" required></textarea>
+                <button id="sendButton" type="submit"><span>Ask</span><span class="send-icon" aria-hidden="true">&#8599;</span></button>
+            </form>
+            <p class="hint">Press Enter to send <span>Shift + Enter for a new line</span></p>
+            <p class="disclaimer">For educational purposes only. This assistant is not a substitute for advice from a qualified healthcare professional.</p>
+        </main>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
